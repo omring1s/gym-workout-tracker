@@ -11,17 +11,25 @@ const DATA_FILE = path.join(__dirname, "workouts.json");
 
 let workouts = [];
 if (fs.existsSync(DATA_FILE)) {
-    workouts = JSON.parse(fs.readFileSync(DATA_FILE));
+    try {
+        workouts = JSON.parse(fs.readFileSync(DATA_FILE));
+    } catch (err) {
+        console.error("Error reading workouts.json:", err);
+        workouts = [];
+    }
 }
 
+// Save workouts to file
 function saveWorkouts() {
     fs.writeFileSync(DATA_FILE, JSON.stringify(workouts, null, 4));
 }
 
+// Create workout
 app.post("/workouts", (req, res) => {
-    workouts.push(req.body);
+    const workout = req.body;
+    workouts.push(workout);
     saveWorkouts();
-    res.json(req.body);
+    res.json(workout);
 });
 
 app.get("/workouts", (req, res) => {
