@@ -25,6 +25,7 @@ Log exercises by body part, track your weight and reps, visualize progress with 
 1. **Clone the repository:**
 
 git clone https://github.com/YOUR_USERNAME/gym-workout-tracker.git
+
 cd gym-workout-tracker
 
 2. **Install backend dependencies**
