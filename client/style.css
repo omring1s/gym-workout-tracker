@@ -1,35 +1,79 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Arial', sans-serif;
+    background: #f7f7f7;
     text-align: center;
     padding: 20px;
-    background: #f0f2f5;
 }
 
 h1 {
+    color: #333;
+}
+
+.card {
+    background: #fff;
+    padding: 20px;
     margin-bottom: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    display: inline-block;
+    width: 300px;
 }
 
-.input-group {
-    margin-bottom: 30px;
-}
-
-input {
-    padding: 10px;
-    margin: 5px;
-    width: 150px;
-    border-radius: 5px;
+.card input, .card select {
+    width: 90%;
+    margin: 8px 0;
+    padding: 8px;
+    border-radius: 6px;
     border: 1px solid #ccc;
 }
 
-button {
-    padding: 10px 15px;
-    border-radius: 5px;
-    border: none;
+.card button {
     background: #007bff;
     color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
     cursor: pointer;
 }
 
-button:hover {
+.card button:hover {
     background: #0056b3;
+}
+
+.chart-card {
+    max-width: 800px;
+    margin: auto;
+    margin-bottom: 20px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.workout-list {
+    max-width: 800px;
+    margin: auto;
+}
+
+.workout-item {
+    background: #fff;
+    margin: 8px;
+    padding: 12px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+    text-align: left;
+}
+
+.workout-item button {
+    background: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    float: right;
+}
+
+.workout-item button:hover {
+    background: #cc0000;
 }
