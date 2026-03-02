@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="style.css">
-<title>Workout Tracker</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta charset="UTF-8">
+    <title>Gym Workout Tracker</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-
 <body>
 
-<h1>Workout Tracker</h1>
+    <h1>Gym Workout Tracker</h1>
 
-<input id="exercise" placeholder="Exercise">
-<input id="weight" placeholder="Weight">
-<input id="reps" placeholder="Reps">
+    <div class="input-group">
+        <input id="exercise" placeholder="Exercise">
+        <input id="weight" type="number" placeholder="Weight (lbs)">
+        <input id="reps" type="number" placeholder="Reps">
+        <button onclick="addWorkout()">Add Workout</button>
+    </div>
 
-<button onclick="addWorkout()">Add Workout</button>
+    <canvas id="chart"></canvas>
 
-<canvas id="chart"></canvas>
-
-<script src="script.js"></script>
-
+    <script src="script.js"></script>
 </body>
 </html>
