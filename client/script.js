@@ -1,7 +1,6 @@
 let chart;
 let workoutsData = [];
 
-// Map body parts to exercises
 const exercisesByBodyPart = {
     Chest: ["Bench Press", "Incline Bench", "Chest Fly"],
     Back: ["Pull-Up", "Deadlift", "Bent Over Row"],
@@ -12,13 +11,8 @@ const exercisesByBodyPart = {
 };
 
 // Populate exercises based on body part
-document.getElementById("bodyPart").addEventListener("change", (e) => {
-    populateExercises(e.target.value, "exercise");
-});
-
-document.getElementById("filterBodyPart").addEventListener("change", (e) => {
-    populateExercises(e.target.value, "filterExercise");
-});
+document.getElementById("bodyPart").addEventListener("change", e => populateExercises(e.target.value, "exercise"));
+document.getElementById("filterBodyPart").addEventListener("change", e => populateExercises(e.target.value, "filterExercise"));
 
 function populateExercises(bodyPart, selectId) {
     const select = document.getElementById(selectId);
@@ -68,43 +62,46 @@ async function addWorkout() {
 }
 
 function clearInputs() {
-    document.getElementById("weight").value = "";
-    document.getElementById("reps").value = "";
-    document.getElementById("sets").value = "";
-    document.getElementById("notes").value = "";
-    document.getElementById("exercise").value = "";
-    document.getElementById("bodyPart").value = "";
+    ["bodyPart","exercise","sets","reps","weight","notes"].forEach(id => document.getElementById(id).value = "");
 }
 
-// Load and display workouts
+// Load workouts
 async function loadWorkouts() {
     const res = await fetch("http://localhost:5000/workouts");
     workoutsData = await res.json();
     renderWorkoutList(workoutsData);
-    renderChart(workoutsData);
+    renderMainChart(workoutsData);
 }
 
-// Render chart showing total volume
-function renderChart(workouts) {
-    const labels = workouts.map(w => w.date + " " + w.exercise);
-    const data = workouts.map(w => w.weight * w.reps * w.sets);
+// Render main chart: Weight per exercise over time
+function renderMainChart(workouts) {
+    // Group by exercise
+    const exercises = [...new Set(workouts.map(w => w.exercise))];
+    const labels = [...new Set(workouts.map(w => w.date))];
+
+    const datasets = exercises.map((ex, i) => {
+        const data = labels.map(date => {
+            const w = workouts.find(wk => wk.exercise === ex && wk.date === date);
+            return w ? w.weight : null;
+        });
+        return {
+            label: ex,
+            data,
+            borderColor: getRandomColor(),
+            fill: false,
+            tension: 0.2
+        };
+    });
 
     if (chart) chart.destroy();
-    chart = new Chart(document.getElementById("chart"), {
-        type: "bar",
-        data: {
-            labels,
-            datasets: [{
-                label: "Total Volume (Weight × Reps × Sets)",
-                data,
-                backgroundColor: labels.map(() => getRandomColor())
-            }]
-        },
-        options: { responsive: true }
+    chart = new Chart(document.getElementById("mainChart"), {
+        type: "line",
+        data: { labels, datasets },
+        options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
     });
 }
 
-// Render workout list with edit/delete
+// Workout list with edit/delete
 function renderWorkoutList(workouts) {
     const listDiv = document.getElementById("workout-list");
     listDiv.innerHTML = "";
@@ -112,9 +109,9 @@ function renderWorkoutList(workouts) {
         const div = document.createElement("div");
         div.className = "workout-item";
         div.innerHTML = `
-            <strong>${w.date} - ${w.bodyPart} - ${w.exercise}</strong> <br>
-            ${w.sets} sets x ${w.reps} reps @ ${w.weight} lbs <br>
-            Notes: ${w.notes || "-"} <br>
+            <strong>${w.date} - ${w.bodyPart} - ${w.exercise}</strong><br>
+            ${w.sets} sets x ${w.reps} reps @ ${w.weight} lbs<br>
+            Notes: ${w.notes || "-"}<br>
             <button onclick="editWorkout(${i})">Edit</button>
             <button onclick="deleteWorkout(${i})">Delete</button>
         `;
@@ -122,13 +119,11 @@ function renderWorkoutList(workouts) {
     });
 }
 
-// Delete workout
 async function deleteWorkout(index) {
     await fetch(`http://localhost:5000/workouts/${index}`, { method: "DELETE" });
     loadWorkouts();
 }
 
-// Edit workout
 function editWorkout(index) {
     const w = workoutsData[index];
     document.getElementById("bodyPart").value = w.bodyPart;
@@ -138,12 +133,10 @@ function editWorkout(index) {
     document.getElementById("reps").value = w.reps;
     document.getElementById("weight").value = w.weight;
     document.getElementById("notes").value = w.notes;
-
-    // Delete old entry on save
     deleteWorkout(index);
 }
 
-// Apply / Clear Filters
+// Filters
 function applyFilters() {
     const bodyPart = document.getElementById("filterBodyPart").value;
     const exercise = document.getElementById("filterExercise").value;
@@ -151,14 +144,14 @@ function applyFilters() {
     if (bodyPart) filtered = filtered.filter(w => w.bodyPart === bodyPart);
     if (exercise) filtered = filtered.filter(w => w.exercise === exercise);
     renderWorkoutList(filtered);
-    renderChart(filtered);
+    renderMainChart(filtered);
 }
 
 function clearFilters() {
     document.getElementById("filterBodyPart").value = "";
     document.getElementById("filterExercise").value = "";
     renderWorkoutList(workoutsData);
-    renderChart(workoutsData);
+    renderMainChart(workoutsData);
 }
 
 // Random color generator
