@@ -18,6 +18,7 @@ app.get("/workouts", (req, res) => {
     res.json(workouts);
 });
 
-app.listen(5000, () => {
-    console.log("Server running on port 5000");
+const PORT = 5000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });
