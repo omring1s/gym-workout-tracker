@@ -9,31 +9,25 @@ app.use(express.json());
 
 const DATA_FILE = path.join(__dirname, "workouts.json");
 
-// Load workouts from JSON file
 let workouts = [];
 if (fs.existsSync(DATA_FILE)) {
     workouts = JSON.parse(fs.readFileSync(DATA_FILE));
 }
 
-// Save workouts to JSON
 function saveWorkouts() {
     fs.writeFileSync(DATA_FILE, JSON.stringify(workouts, null, 4));
 }
 
-// Add workout
 app.post("/workouts", (req, res) => {
-    const workout = req.body;
-    workouts.push(workout);
+    workouts.push(req.body);
     saveWorkouts();
-    res.json(workout);
+    res.json(req.body);
 });
 
-// Get all workouts
 app.get("/workouts", (req, res) => {
     res.json(workouts);
 });
 
-// Update workout by index
 app.put("/workouts/:index", (req, res) => {
     const idx = parseInt(req.params.index);
     if (!isNaN(idx) && workouts[idx]) {
@@ -45,7 +39,6 @@ app.put("/workouts/:index", (req, res) => {
     }
 });
 
-// Delete workout by index
 app.delete("/workouts/:index", (req, res) => {
     const idx = parseInt(req.params.index);
     if (!isNaN(idx) && workouts[idx]) {
